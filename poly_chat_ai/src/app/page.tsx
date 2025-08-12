@@ -2,107 +2,119 @@
 
 import React, { useState } from "react";
 
-function Conversations({id, titles}) {
-		const [threads, setThreads] = useState([
-		{ id: 1, title: "Thread 1" },
-		{ id: 2, title: "Thread 2" },
-	]);
-
+function Conversations({ id, title, threads }) {
 	return (
 		<div>
-
 			<div
 				key={id}
 				className="ml-4 p-2 px-4 rounded bg-gray-300 {color} rounded-full hover:bg-gray-100 cursor-pointer"
-				>
-				{title} convo and more
+			>
+				{title}
 				<button
-						// onClick={() => handleNewConversation()}
-						className="bg-gray-600 hover:bg-blue-600 text-white rounded-full ml-4 px-2"
-					>
-						+ 
+					// onClick={() => handleNewConversation()}
+					className="bg-gray-600 hover:bg-blue-600 text-white rounded-full ml-4 px-2"
+				>
+					+
 				</button>
 			</div>
 			<div className="bg-gray-200 space-y-2 flex-1 overflow-auto">
-					{threads.map((conv) => (
-						<Conversations
-							id={conv.id}
-							tilte={conv.title}/>
-						
-					))}
-				</div>
+				{threads.map((thread) => (
+					<div key={thread.id} className="ml-6 p-1">
+						{thread.title}
+					</div>
+				))}
+			</div>
 		</div>
-	)
+	);
 }
 
-function Topic({id, title}) {
-	const [conversations, setConversations] = useState([
-	{ id: 1, title: "Conversation" },
-	]);
-	
+function Topic({ id, title, conversations }) {
 	function handleNewConversation() {
-		setConversations([
-							...conversations,
-							{ id: Date.now(), title: "New conversation" },
-						])
-	};
+		// This function can be implemented to add new conversations if needed
+	}
 
 	return (
 		<div>
-
 			<div
 				key={id}
 				className="ml-4 p-2 px-4 rounded bg-gray-300 {color} rounded-full hover:bg-gray-100 cursor-pointer"
-				>
-				{title} topic and more
+			>
+				{title}
 				<button
-						onClick={() => handleNewConversation()}
-						className="bg-gray-600 hover:bg-blue-600 text-white rounded-full ml-4 px-2"
-					>
-						+ 
+					onClick={() => handleNewConversation()}
+					className="bg-gray-600 hover:bg-blue-600 text-white rounded-full ml-4 px-2"
+				>
+					+
 				</button>
 			</div>
 			<div className="bg-gray-200 space-y-2 flex-1 overflow-auto">
-					{conversations.map((conv) => (
-						<Conversations
-							id={conv.id}
-							tilte={conv.title}/>
-						
-					))}
-				</div>
+				{conversations.map((conv) => (
+					<Conversations
+						key={conv.id}
+						id={conv.id}
+						title={conv.title}
+						threads={conv.threads}
+					/>
+				))}
+			</div>
 		</div>
-		
-	)
+	);
 }
 
-
-function Sidebar({topics, setTopics}) {
-
-
+function Sidebar({ topics, setTopics }) {
 	return (
 		<div className="w-70 bg-gray-200 p-4 flex flex-col">
-				{/* <h2 className="text-lg font-bold mb-4">Conversations</h2> */}
-				<div className="bg-gray-200 space-y-2 flex-1 overflow-auto">
-					{topics.map((top) => (
-						<Topic
-							id={top.id}
-							tilte={top.title}/>
-						
-					))}
-				</div>
-
+			{/* <h2 className="text-lg font-bold mb-4">Conversations</h2> */}
+			<div className="bg-gray-200 space-y-2 flex-1 overflow-auto">
+				{topics.map((top) => (
+					<Topic
+						key={top.id}
+						id={top.id}
+						title={top.title}
+						conversations={top.conversations}
+					/>
+				))}
 			</div>
-	)
+		</div>
+	);
 }
 
 export default function Home() {
 	const [topics, setTopics] = useState([
-		{ id: 1, title: "Topic" , conversations: {}},
-		{ id: 2, title: "Topic" , conversations: {}},
+		{
+			id: 1,
+			title: "Topic 1",
+			conversations: [
+				{
+					id: 1,
+					title: "Conversation 1",
+					threads: [
+						{ id: 1, title: "Thread 1" },
+						{ id: 2, title: "Thread 2" },
+					],
+				},
+				{
+					id: 2,
+					title: "Conversation 2",
+					threads: [{ id: 3, title: "Thread 3" }],
+				},
+			],
+		},
+		{
+			id: 2,
+			title: "Topic 2",
+			conversations: [
+				{
+					id: 3,
+					title: "Conversation 3",
+					threads: [{ id: 4, title: "Thread 4" }],
+				},
+			],
+		},
 	]);
 
 	// TODO Hoow do y nest my states to heva a three strucure ?
-	 const [messages, setMessages] = useState([
+	const [messages, setMessages] = useState([
 		{ role: "assistant", content: "Hello! How can I help you today?" },
 	]);
 	const [input, setInput] = useState("");
@@ -116,14 +128,14 @@ export default function Home() {
 	return (
 		<div className="flex h-screen bg-gray-100">
 			{/* Sidebar */}
-			<Sidebar 
+			<Sidebar
 				// conversations={conversations}
 				// setConversations={setConversations}
 				topics={topics}
 				setTopics={setTopics}
 				// threads={threads}
 				// setTthreads={setThreads}
-				/>
+			/>
 
 			{/* Chat Thread */}
 			<div className="flex flex-col flex-1">
