@@ -1,8 +1,32 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction, ChangeEvent, KeyboardEvent, MouseEvent } from "react";
 
-function Conversations({ id, title, threads }) {
+// TypeScript interfaces
+export interface Thread {
+	id: number;
+	title: string;
+}
+
+export interface Conversation {
+	id: number;
+	title: string;
+	threads: Thread[];
+}
+
+export interface Topic {
+	id: number;
+	title: string;
+	conversations: Conversation[];
+}
+
+interface ConversationsProps {
+	id: number;
+	title: string;
+	threads: Thread[];
+}
+
+function Conversations({ id, title, threads }: ConversationsProps) {
 	return (
 		<div>
 			<div
@@ -28,7 +52,13 @@ function Conversations({ id, title, threads }) {
 	);
 }
 
-function Topic({ id, title, conversations }) {
+interface TopicProps {
+	id: number;
+	title: string;
+	conversations: Conversation[];
+}
+
+function Topic({ id, title, conversations }: TopicProps) {
 	function handleNewConversation() {
 		// This function can be implemented to add new conversations if needed
 	}
@@ -61,7 +91,12 @@ function Topic({ id, title, conversations }) {
 	);
 }
 
-function Sidebar({ topics, setTopics }) {
+interface SidebarProps {
+	topics: Topic[];
+	setTopics: Dispatch<SetStateAction<Topic[]>>;
+}
+
+function Sidebar({ topics, setTopics }: SidebarProps) {
 	return (
 		<div className="w-70 bg-gray-200 p-4 flex flex-col">
 			{/* <h2 className="text-lg font-bold mb-4">Conversations</h2> */}
@@ -79,8 +114,13 @@ function Sidebar({ topics, setTopics }) {
 	);
 }
 
+interface Message {
+	role: string;
+	content: string;
+}
+
 export default function Home() {
-	const [topics, setTopics] = useState([
+	const [topics, setTopics] = useState<Topic[]>([
 		{
 			id: 1,
 			title: "Topic 1",
@@ -114,12 +154,15 @@ export default function Home() {
 	]);
 
 	// TODO Hoow do y nest my states to heva a three strucure ?
-	const [messages, setMessages] = useState([
+	const [messages, setMessages] = useState<Message[]>([
 		{ role: "assistant", content: "Hello! How can I help you today?" },
 	]);
-	const [input, setInput] = useState("");
+	const [input, setInput] = useState<string>("");
 
-	const sendMessage = () => {
+	const sendMessage = (
+		e?: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLInputElement>
+	) => {
+		if (e) e.preventDefault?.();
 		if (!input.trim()) return;
 		setMessages([...messages, { role: "user", content: input }]);
 		setInput("");
@@ -159,13 +202,13 @@ export default function Home() {
 					<input
 						type="text"
 						value={input}
-						onChange={(e) => setInput(e.target.value)}
+						onChange={(e: ChangeEvent<HTMLInputElement>) => setInput(e.target.value)}
 						placeholder="Send a message..."
 						className="flex-1 border rounded-full p-2 mr-2"
-						onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+						onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => e.key === "Enter" && sendMessage(e)}
 					/>
 					<button
-						onClick={sendMessage}
+						onClick={(e) => sendMessage(e)}
 						className="bg-green-500 hover:bg-green-600 text-white rounded px-4"
 					>
 						Send
