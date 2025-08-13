@@ -16,9 +16,10 @@ interface CategoriesProps {
   title: string;
   color: string;
   threads: Thread[];
+  setConversationSelection: Dispatch<SetStateAction<[number, number, number]>>;
 }
 
-function Categories({ id, title, color, threads }: CategoriesProps) {
+function Categories({ id, title, color, threads, setConversationSelection }: CategoriesProps) {
   const bgClass = colorClassesBright[color] || "bg-gray-300";
   function handleNewthread() {
     // This function can be implemented to add new threads if needed
@@ -45,7 +46,9 @@ function Categories({ id, title, color, threads }: CategoriesProps) {
             id={thr.id}
             title={thr.title}
             color={color}
-            conversations={thr.Conversations}
+            conversations={thr.conversations}
+			categoryId={id}
+			setConversationSelection={setConversationSelection}
           />
         ))}
       </div>

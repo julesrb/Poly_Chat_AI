@@ -3,24 +3,48 @@
 import React, { useState, Dispatch, SetStateAction, ChangeEvent, KeyboardEvent, MouseEvent } from "react";
 import { Categories } from "./Catergories/Categories";
 import { Thread, Category, Message} from "@/types/myTypes";
+import Input from "./Input/Input";
 
 
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>(getInitialCategories());
 
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hello! How can I help you today?" },
+  const [conversationSelection, setConversationSelection] = useState<[number, number, number]>([
+    categories[0].id,
+    categories[0].threads[0].id,
+    categories[0].threads[0].conversations[0].id,
   ]);
-  const [input, setInput] = useState<string>("");
 
-  const sendMessage = (
-    e?: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    if (e) e.preventDefault?.();
-    if (!input.trim()) return;
-    setMessages([...messages, { role: "user", content: input }]);
-    setInput("");
+  const addMessage = (categoryId: number, threadId: number, conversationId: number, message: Message) => {
+  setCategories((prev) =>
+    prev.map((cat) =>
+      cat.id === categoryId
+        ? {
+            ...cat,
+            threads: cat.threads.map((thread) =>
+              thread.id === threadId
+                ? {
+                    ...thread,
+                    conversations: thread.conversations.map((conv) =>
+                      conv.id === conversationId
+                        ? { ...conv, messages: [...conv.messages, message] }
+                        : conv
+                    ),
+                  }
+                : thread
+            ),
+          }
+        : cat
+      )
+    );
   };
+
+  const [selectedCategoryId, selectedThreadId, selectedConversationId] = conversationSelection;
+
+  const currentConversation = categories
+  .find(cat => cat.id === selectedCategoryId)!
+  .threads.find(thread => thread.id === selectedThreadId)!
+  .conversations.find(conv => conv.id === selectedConversationId)!;
 
   return (
     <div className="flex h-screen bg-white text-gray-800">
@@ -36,6 +60,7 @@ export default function Home() {
               title={top.title}
               color={top.color}
               threads={top.threads}
+			  setConversationSelection={setConversationSelection}
             />
           ))}
         </div>
@@ -44,7 +69,7 @@ export default function Home() {
       {/* Chat Thread */}
       <div className="flex flex-col flex-1">
         <div className="flex-1 overflow-auto px-8 py-4 space-y-4">
-          {messages.map((msg, index) => (
+          {currentConversation.messages.map((msg, index) => (
             <div
               key={index}
               className={`p-3 rounded-xl max-w-lg whitespace-pre-wrap ${
@@ -59,38 +84,10 @@ export default function Home() {
         </div>
 
         {/* Input Bar */}
-        <div className="px-8 py-4">
-          <div className="p-2 bg-gray-300 rounded-xl flex">
-          <textarea
-            value={input}
-            onChange={(e) => {
-              setInput(e.target.value);
-
-              // Auto-grow but limit height
-              e.target.style.height = "auto"; // reset height so scrollHeight is correct
-              const maxHeight = 120; // px limit (around 5-6 lines)
-              e.target.style.height = Math.min(e.target.scrollHeight, maxHeight) + "px";
-            }}
-            placeholder="Write anything..."
-            className="flex-1 p-2 mr-2 resize-none overflow-y-auto 
-                  scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent
-                  focus:outline-none focus:ring-0"
-            rows={1}
-            onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault(); // stop newline
-              sendMessage(e);
-            }
-            }}
-          />
-          <button
-            onClick={(e) => sendMessage(e)}
-            className="bg-green-500 hover:bg-green-600 text-dark rounded-full px-3"
-          >
-            &#11014;
-          </button>
-          </div>
-          </div>
+        <Input
+          conversationSelection={conversationSelection}
+          addMessage={addMessage}
+        />
       </div>
     </div>
   );

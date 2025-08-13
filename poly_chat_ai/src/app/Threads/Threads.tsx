@@ -8,7 +8,9 @@ interface threadsProps {
   id: number;
   title: string;
   color: string;
+  categoryId: number;
   conversations: Conversation[];
+  setConversationSelection: Dispatch<SetStateAction<[number, number, number]>>;
 }
 
 const colorClassesPale: Record<string, string> = {
@@ -19,7 +21,7 @@ const colorClassesPale: Record<string, string> = {
   // add all your colors here
 };
 
-function Threads({ id, title, color, conversations }: threadsProps) {
+function Threads({ id, title, color, conversations, categoryId, setConversationSelection }: threadsProps) {
   const bgClass = colorClassesPale[color] || "bg-gray-300";
 
   return (
@@ -42,6 +44,9 @@ function Threads({ id, title, color, conversations }: threadsProps) {
             key={conv.id}
             id={conv.id}
             title={conv.title}
+			categoryId={categoryId}
+			threadId={id}
+            setConversationSelection={setConversationSelection}
           />
         ))}
       </div>
