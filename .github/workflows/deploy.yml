@@ -1,0 +1,37 @@
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: main 
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.VM_SSH_KEY }}
+
+    - name: Deploy via Git pull
+      env:
+        REPO_URL: https://github.com/${{ github.repository }}.git
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.VM_USER }}@${{ secrets.VM_DROPLET_HOST }} "
+          mkdir -p /app &&
+          cd /app &&
+          if [ ! -d .git ]; then
+            git clone $REPO_URL . &&
+            git checkout main
+          else
+            git fetch origin &&
+            git reset --hard origin/main
+          fi &&
+          cd poly_chat_ai
+            npm run dev
+        "
