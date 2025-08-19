@@ -8,20 +8,55 @@ import { Thread, Category, Message} from "@/types/myTypes";
 interface InputProps {
   conversationSelection: [number, number, number];
   addMessage: (categoryId: number, threadId: number, conversationId: number, message: Message) => void;
+  categories: Category[];
 }
 
-export default function Input({ conversationSelection, addMessage }: InputProps) {
+export default function Input({ conversationSelection, addMessage, categories }: InputProps) {
   const [input, setInput] = useState<string>("");
 
-  const sendMessage = (
-    e?: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    if (e) e.preventDefault?.();
-    if (!input.trim()) return;
+const conversation =
+   categories
+     .find(cat => cat.id === conversationSelection[0])
+     ?.threads.find(t => t.id === conversationSelection[1])
+     ?.conversations.find(c => c.id === conversationSelection[2])
+     ?.messages ?? [];
 
-    // addMessage(categoryId, threadId, conversationId, { role: "user", content: input });
-	addMessage(conversationSelection[0], conversationSelection[1], conversationSelection[2], { role: "user", content: input });
-    setInput("");
+  const sendMessage = async (
+	e?: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLTextAreaElement | HTMLInputElement> ) => {
+	if (e) e.preventDefault?.();
+	if (!input.trim()) return;
+
+	const [categoryId, threadId, conversationId] = conversationSelection;
+
+	// show user message immediately
+	addMessage(categoryId, threadId, conversationId, {
+		role: "user",
+		content: input,
+	});
+	setInput("");
+
+	// ✅ send conversation + new user message as "messages"
+	const res = await fetch("/api/chat", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+		messages: [...conversation, { role: "user", content: input }],
+		}),
+	});
+
+	if (!res.ok) {
+		console.error("Server error:", await res.text());
+		return;
+	}
+
+	const data = await res.json();
+	console.log("Response:", data);
+
+	// show assistant message
+	addMessage(categoryId, threadId, conversationId, {
+		role: "assistant", // 👈 was "system", should be "assistant"
+		content: data.reply.content,
+	});
   };
 
   return (

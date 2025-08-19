@@ -11,12 +11,12 @@ interface ConversationsProps {
   setConversationSelection: Dispatch<SetStateAction<[number, number, number]>>;
 }
 
-function Conversations({ id, title, categoryId, threadId,setConversationSelection }: ConversationsProps) {
+function Conversations({ id, title, categoryId, threadId, setConversationSelection}: ConversationsProps) {
 
   return (
       <div
         key={id}
-        className={`py-0 ml-8 rounded rounded-full hover:bg-gray-100 cursor-pointer flex items-center justify-between`}
+        className={`py-0 ml-6 pl-2 rounded rounded-full text-gray-700 hover:bg-gray-200 cursor-pointer flex items-center justify-between`}
 		onClick={() => {
 			console.log("Category:", categoryId, "Thread:", threadId, "Conversation:", id);
 			setConversationSelection([categoryId, threadId, id]);

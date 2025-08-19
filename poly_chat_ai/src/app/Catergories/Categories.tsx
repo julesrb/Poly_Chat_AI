@@ -4,11 +4,20 @@ import React, { useState, Dispatch, SetStateAction, ChangeEvent, KeyboardEvent, 
 import { Threads } from "../Threads/Threads";
 import { Conversation, Thread, Category} from "@/types/myTypes";
 
-const colorClassesBright: Record<string, string> = {
-  yellow: "bg-yellow-300",
+
+const colorClasses: Record<string, string> = {
+  green: "bg-[#efff05]",
   blue: "bg-blue-300",
   red: "bg-red-300",
-  green: "bg-green-300",
+  yellow: "bg-[#FAE500]",
+};
+
+const colorClassesPale: Record<string, string> = {
+  green: "bg-[#faffb8]",
+  blue: "bg-blue-100",
+  red: "bg-red-100",
+  yellow: "bg-[#FFF9B8]",
+  // add all your colors here
 };
 
 interface CategoriesProps {
@@ -17,12 +26,15 @@ interface CategoriesProps {
   color: string;
   threads: Thread[];
   setConversationSelection: Dispatch<SetStateAction<[number, number, number]>>;
+  addThread: (categoryId: number, title: string) => void;
+  addConversation: (categoryId: number, threadId: number, title: string) => void;
 }
 
-function Categories({ id, title, color, threads, setConversationSelection }: CategoriesProps) {
+function Categories({ id, title, color, threads, setConversationSelection, addThread, addConversation }: CategoriesProps) {
 
-  const bgClass = colorClassesBright[color] || "bg-gray-300";
-  const [isOpen, setIsOpen] = useState(true);
+  const bgClass = colorClasses[color] || "bg-gray-300";
+  const bgClassPale = colorClassesPale[color] || "bg-gray-300";
+  const [isOpen, setIsOpen] = useState<boolean>(true);
   function handleNewthread() {
     // This function can be implemented to add new threads if needed
   }
@@ -35,16 +47,20 @@ function Categories({ id, title, color, threads, setConversationSelection }: Cat
     <div>
       <div
         key={id}
-        className={`px-4 py-1 mb-1 rounded ${bgClass} font-bold rounded-full hover:bg-gray-100 cursor-pointer flex items-center justify-between`}
+
+        className={`px-4 py-1 mb-1 ${bgClass} rounded-full font-bold hover:text-white hover:bg-gray-500 cursor-pointer flex items-center justify-between`}
 		onClick={toggleThreads}
       >
         {title}
-        {/* <button
-          onClick={() => handleNewthread()}
-          className=" hover:bg-blue-600 font-bold rounded-full ml-4 px-2"
+		<button
+          onClick={(e) => {
+			e.stopPropagation();  // ✅ prevents parent click
+			addThread(id, "New Thread");
+		}}
+          className={`hover:bg-gray-200 hover:bg-gray-400 hover:text-white rounded-full py-0 ml-4 pl-4 pr-4`}
         >
           +
-        </button> */}
+        </button>
       </div>
       {isOpen && (
         <div className="space-y-2 flex-1 overflow-auto">
@@ -57,6 +73,9 @@ function Categories({ id, title, color, threads, setConversationSelection }: Cat
               conversations={thr.conversations}
               categoryId={id}
               setConversationSelection={setConversationSelection}
+              addThread={addThread}
+              addConversation={addConversation}
+			  bgClassPale={bgClassPale}
             />
           ))}
         </div>
