@@ -15,3 +15,17 @@ user,
 topic linked through the user id,
 conversation linked through the topic id,
 messages linked to, 
+
+## feature to add:
+
+- switch the new convo when a new one is created
+
+- change name of the menu on click 
+
+- add local model option 
+
+- x add title of the model 
+
+- add progressive text field
+
+- rethink font and colors

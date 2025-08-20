@@ -23,6 +23,7 @@ const colorClassesPale: Record<string, string> = {
 interface CategoriesProps {
   id: number;
   title: string;
+  model: string;
   color: string;
   threads: Thread[];
   setConversationSelection: Dispatch<SetStateAction<[number, number, number]>>;
@@ -30,7 +31,7 @@ interface CategoriesProps {
   addConversation: (categoryId: number, threadId: number, title: string) => void;
 }
 
-function Categories({ id, title, color, threads, setConversationSelection, addThread, addConversation }: CategoriesProps) {
+function Categories({ id, title, model, color, threads, setConversationSelection, addThread, addConversation }: CategoriesProps) {
 
   const bgClass = colorClasses[color] || "bg-gray-300";
   const bgClassPale = colorClassesPale[color] || "bg-gray-300";
@@ -51,7 +52,9 @@ function Categories({ id, title, color, threads, setConversationSelection, addTh
         className={`px-4 py-1 mb-1 ${bgClass} rounded-full font-bold hover:text-white hover:bg-gray-500 cursor-pointer flex items-center justify-between`}
 		onClick={toggleThreads}
       >
-        {title}
+        <div className="flex items-center">
+			{title} <span className="text-xs font-normal ml-2">{model}</span>
+		</div>
 		<button
           onClick={(e) => {
 			e.stopPropagation();  // ✅ prevents parent click

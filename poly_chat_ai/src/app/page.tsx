@@ -2,8 +2,11 @@
 
 import React, { useState, Dispatch, SetStateAction, ChangeEvent, KeyboardEvent, MouseEvent } from "react";
 import { Categories } from "./Catergories/Categories";
-import { Thread, Category, Message} from "@/types/myTypes";
+import { ChatHistory } from "./ChatHistory/ChatHistory";
+import { Thread, Conversation, Category, Message} from "@/types/myTypes";
 import Input from "./Input/Input";
+
+import ReactMarkdown from "react-markdown";
 
 
 export default function Home() {
@@ -89,9 +92,36 @@ export default function Home() {
   );
   };
 
+  const deleteMessage = (categoryId: number, threadId: number, conversationId: number, messageIndex: number) => {
+  setCategories((prev) =>
+    prev.map((cat) =>
+      cat.id === categoryId
+        ? {
+            ...cat,
+            threads: cat.threads.map((thread) =>
+              thread.id === threadId
+                ? {
+                    ...thread,
+                    conversations: thread.conversations.map((conv) =>
+                      conv.id === conversationId
+                        ? {
+                            ...conv,
+                            messages: conv.messages.filter((_, i) => i !== messageIndex),
+                          }
+                        : conv
+                    ),
+                  }
+                : thread
+            ),
+          }
+        : cat
+    )
+  );
+};
+
   const [selectedCategoryId, selectedThreadId, selectedConversationId] = conversationSelection;
 
-  const currentConversation = categories
+  const currentConversation : Conversation = categories
   .find(cat => cat.id === selectedCategoryId)!
   .threads.find(thread => thread.id === selectedThreadId)!
   .conversations.find(conv => conv.id === selectedConversationId)!;
@@ -101,50 +131,37 @@ export default function Home() {
     
     {/* Sidebar */}
     <div className="w-70 bg-[#f6f6f6] p-4 flex flex-col">
-    <h2 className="text-lg font-bold mb-4 ">Poly_AI_Chat [-,-]</h2>
-    <div className="space-y-2 flex-1 overflow-auto">
-      {categories.map((top) => (
-      <Categories
-        key={top.id}
-        id={top.id}
-        title={top.title}
-        color={top.color}
-        threads={top.threads}
-        setConversationSelection={setConversationSelection}
-        addConversation={addConversation}
-        addThread={addThread}
-      />
-      ))}
-    </div>
-    </div>
-
-    {/* Chat history */}
-    <div className="flex flex-col flex-1">
-		<div className="flex-1 overflow-auto px-8 py-4 space-y-4">
-			{currentConversation.messages.map((msg, index) => (
-			<div
-				key={index}
-				className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-			>
-				<div
-				className={`p-3 rounded-xl whitespace-pre-wrap ${
-					msg.role === "user"
-					? "bg-gray-300 mr-4 max-w-xs" // max width only for user
-					: "bg-white ml-4"             // assistant can expand
-				}`}
-				>
-				{msg.content}
-				</div>
-			</div>
-			))}
+		<h2 className="text-lg font-bold mb-4 ">Poly_AI_Chat [-,-]</h2>
+		<div className="space-y-2 flex-1 overflow-auto">
+		{categories.map((top) => (
+		<Categories
+			key={top.id}
+			id={top.id}
+			model={top.model}
+			title={top.title}
+			color={top.color}
+			threads={top.threads}
+			setConversationSelection={setConversationSelection}
+			addConversation={addConversation}
+			addThread={addThread}
+		/>
+		))}
 		</div>
+    </div>
 
+    <div className="flex flex-col flex-1">
+    	{/* Chat history */}
+		<ChatHistory
+			currentConversation={currentConversation}
+			conversationSelection={conversationSelection}
+			deleteMessage={deleteMessage}
+		/>
 		<Input
 			conversationSelection={conversationSelection}
 			addMessage={addMessage}
 			categories={categories}
 		/>
-		</div>
+	</div>
   </div>
   );
 }
@@ -153,7 +170,8 @@ function getInitialCategories(): Category[] {
   return [
   {
   id: 1,
-  title: "Development",
+  title: "Programming",
+  model: "gpt-4o",
   color: "blue",
   threads: [
    {
@@ -166,6 +184,7 @@ function getInitialCategories(): Category[] {
   {
   id: 2,
   title: "Cooking",
+  model: "gemini",
   color: "red",
   threads: [
   {
@@ -186,6 +205,7 @@ function getInitialCategories(): Category[] {
   {
   id: 3,
   title: "Personal",
+  model: "local",
   color: "yellow",
   threads: [
   {

@@ -2,6 +2,7 @@
 export interface Category {
 	id: number;
 	title: string;
+	model: string;
 	color: string;
 	threads: Thread[];
 }
