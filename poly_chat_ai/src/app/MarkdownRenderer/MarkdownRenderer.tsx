@@ -44,14 +44,16 @@ function MarkdownRenderer({ content }: { content: string }) {
         code({ className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || "");
           return match ? (
-            <SyntaxHighlighter
-              style={oneDark}
-              language={match[1]}
-              PreTag="div"
-              className="rounded-lg my-2"
-            >
-              {String(children).replace(/\n$/, "")}
-            </SyntaxHighlighter>
+            <div className="overflow-x-auto max-w-4xl">
+              <SyntaxHighlighter
+                style={oneDark}
+                language={match[1]}
+                PreTag="pre"
+                className="rounded-lg my-2 max-w-full text-sm"
+              >
+                {String(children).replace(/\n$/, "")}
+              </SyntaxHighlighter>
+            </div>
           ) : (
             <code className="bg-gray-200 px-1 py-0.5 rounded text-sm" {...props}>
               {children}

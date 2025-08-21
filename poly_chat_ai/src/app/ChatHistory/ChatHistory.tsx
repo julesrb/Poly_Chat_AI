@@ -38,7 +38,7 @@ function ChatHistory({ currentConversation, conversationSelection, deleteMessage
             {/* Delete button (top-right) */}
             <button
               onClick={() => deleteMessage(categoryId, threadId, conversationId, index)}
-              className="absolute top-1 right-1 text-gray-500 hover:text-red-500 text-sm"
+              className="absolute top-1 right-1 text-red-400 hover:text-red-800 text-sm"
             >
               X
             </button>

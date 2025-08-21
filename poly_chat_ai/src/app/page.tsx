@@ -127,7 +127,7 @@ export default function Home() {
   .conversations.find(conv => conv.id === selectedConversationId)!;
 
   return (
-  <div className="flex h-screen bg-white text-gray-800">
+  <div className="flex h-screen bg-white text-gray-800 overflow-x-auto">
     
     {/* Sidebar */}
     <div className="w-70 bg-[#f6f6f6] p-4 flex flex-col">
