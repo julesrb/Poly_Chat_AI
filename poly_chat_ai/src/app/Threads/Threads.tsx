@@ -29,14 +29,15 @@ function Threads({ id, title, color, categoryId, conversations, bgClassPale, set
     <div>
       <div
         key={id}
-        className={`p-1 px-4 ml-4 rounded ${bgClassPale} text-gray-700 rounded-full hover:bg-gray-400 hover:text-white cursor-pointer flex items-center justify-between`}
+        className={`p-1 pl-4 pr-2 ml-4 rounded ${bgClassPale} text-gray-700 rounded-full hover:bg-gray-400 hover:text-white cursor-pointer flex items-center justify-between`}
 		onClick={toggleThreads}
       >
         {title}
 		<button
           onClick={(e) => {
 			e.stopPropagation();  // ✅ prevents parent click
-			addConversation(categoryId, id, "New Conversation");
+			setIsOpen(true);
+			addConversation(categoryId, id, "New Chat");
 		}}
           className={`hover:bg-gray-200 hover:text-black rounded-full py-0 ml-6 pl-2 pr-2`}
         >
@@ -48,8 +49,7 @@ function Threads({ id, title, color, categoryId, conversations, bgClassPale, set
         {conversations.map((conv) => (
           <Conversations
             key={conv.id}
-            id={conv.id}
-            title={conv.title}
+			conversation={conv}
 			categoryId={categoryId}
 			threadId={id}
             setConversationSelection={setConversationSelection}

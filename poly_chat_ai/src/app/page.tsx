@@ -6,9 +6,6 @@ import { ChatHistory } from "./ChatHistory/ChatHistory";
 import { Thread, Conversation, Category, Message} from "@/types/myTypes";
 import Input from "./Input/Input";
 
-import ReactMarkdown from "react-markdown";
-
-
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>(getInitialCategories());
 
@@ -19,33 +16,36 @@ export default function Home() {
   ]);
 
   const addConversation = (categoryId: number, threadId: number, title: string) => {
-  setCategories((prev) =>
-  prev.map((cat) =>
-    cat.id === categoryId
-    ? {
-      ...cat,
-      threads: cat.threads.map((thread) =>
-        thread.id === threadId
-        ? {
-          ...thread,
-          conversations: [
-            ...thread.conversations,
-            {
-            id:
-              (thread.conversations[thread.conversations.length - 1]?.id || 0) +
-              1,
-            title,
-            messages: [],
-            },
-          ],
-          }
-        : thread
-      ),
-      }
-    : cat
-    )
-  );
-  };
+	setCategories((prev) => {
+		const updatedCategories = prev.map((cat) =>
+		cat.id === categoryId
+			? {
+				...cat,
+				threads: cat.threads.map((thread) =>
+				thread.id === threadId
+					? {
+						...thread,
+						conversations: [
+						...thread.conversations,
+						{
+							id: (thread.conversations[thread.conversations.length - 1]?.id || 0) + 1,
+							title,
+							messages: [],
+						},
+						],
+					}
+					: thread
+				),
+			}
+			: cat
+		);
+
+		const conversations: Conversation[] = updatedCategories.find(cat => cat.id === categoryId)?.threads.find(thread => thread.id === threadId)?.conversations || [];
+		const conversationId: number = conversations[conversations.length - 1]?.id || 0;
+		setConversationSelection([categoryId, threadId, conversationId]);
+		return updatedCategories; // return the updated categories
+	});
+	};
 
   const addThread = (categoryId: number, title: string) => {
   setCategories((prev) =>

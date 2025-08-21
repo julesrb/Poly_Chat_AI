@@ -18,14 +18,15 @@ messages linked to,
 
 ## feature to add:
 
-- switch the new convo when a new one is created
 
 - change name of the menu on click 
-
 - add local model option 
 
-- x add title of the model 
+- rethink font and colors
+- link to database
 
 - add progressive text field
 
-- rethink font and colors
+- x detection the conversation topic
+- x add title of the model 
+- x switch the new convo when a new one is created

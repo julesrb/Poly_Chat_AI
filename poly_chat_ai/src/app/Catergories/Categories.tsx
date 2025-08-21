@@ -49,7 +49,7 @@ function Categories({ id, title, model, color, threads, setConversationSelection
       <div
         key={id}
 
-        className={`px-4 py-1 mb-1 ${bgClass} rounded-full font-bold hover:text-white hover:bg-gray-500 cursor-pointer flex items-center justify-between`}
+        className={`pl-4 pr-2 py-1 mb-1 ${bgClass} rounded-full font-bold hover:text-white hover:bg-gray-500 cursor-pointer flex items-center justify-between`}
 		onClick={toggleThreads}
       >
         <div className="flex items-center">
@@ -60,7 +60,7 @@ function Categories({ id, title, model, color, threads, setConversationSelection
 			e.stopPropagation();  // ✅ prevents parent click
 			addThread(id, "New Thread");
 		}}
-          className={`hover:bg-gray-200 hover:bg-gray-400 hover:text-white rounded-full py-0 ml-4 pl-4 pr-4`}
+          className={`hover:bg-gray-200 hover:bg-gray-400 hover:text-white rounded-full py-0 ml-4 pl-2 pr-2`}
         >
           +
         </button>
