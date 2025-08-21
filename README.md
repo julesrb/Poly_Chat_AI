@@ -21,6 +21,7 @@ messages linked to,
 
 - change name of the menu on click 
 - add local model option 
+- reverse order of comversation display 
 
 - rethink font and colors
 - link to database

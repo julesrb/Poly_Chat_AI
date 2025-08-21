@@ -50,7 +50,6 @@ const conversation =
 	}
 
 	const data = await res.json();
-	console.log("Response:", data);
 
 	// show assistant message
 	addMessage(categoryId, threadId, conversationId, {

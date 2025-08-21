@@ -1,5 +1,5 @@
 "use client";
-
+import React, { useState, useEffect, useRef } from "react";
 import { Conversation, Message } from "@/types/myTypes";
 import { MarkdownRenderer } from "../MarkdownRenderer/MarkdownRenderer";
 
@@ -11,6 +11,15 @@ interface ChatHistoryProps {
 
 function ChatHistory({ currentConversation, conversationSelection, deleteMessage }: ChatHistoryProps) {
   const [categoryId, threadId, conversationId] = conversationSelection;
+
+   const messagesEndRef = useRef<HTMLDivElement>(null); // Step 1: Create a reference
+
+  // Step 2: scroll to bottom each time messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, [currentConversation.messages]); // Depend on messages array to trigger scroll
 
   return (
     <div className="flex-1 overflow-auto px-8 py-4 space-y-4">
@@ -38,6 +47,7 @@ function ChatHistory({ currentConversation, conversationSelection, deleteMessage
           </div>
         </div>
       ))}
+	  <div ref={messagesEndRef} /> 
     </div>
   );
 }
