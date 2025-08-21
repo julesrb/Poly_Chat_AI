@@ -67,7 +67,7 @@ function Categories({ id, title, model, color, threads, setConversationSelection
       </div>
       {isOpen && (
         <div className="space-y-2 flex-1 overflow-auto">
-          {threads.map((thr) => (
+          {threads.slice().reverse().map((thr) => (
             <Threads
               key={thr.id}
               id={thr.id}

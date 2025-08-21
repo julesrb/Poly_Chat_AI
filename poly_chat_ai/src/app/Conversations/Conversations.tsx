@@ -20,7 +20,7 @@ function Conversations({ conversation, categoryId, threadId, setConversationSele
 				// Add the user prompt to the messages
 				messagesCopy.push({
 					role: 'user',
-					content: "analyze the entire conversation so far and provide a concise summary of the overall topic in 26 characters or fewer and without dot in the end. After providing the answer, confirm that it does not exceed the limit.Do not include any explanations, code, or examples. Return 'New Chat' if the topic is too generic."
+					content: "analyze the entire conversation so far and provide a concise summary of the overall topic in 26 characters or fewer and without dot in the end. After providing the answer, confirm that it does not exceed the limit, but do not print a confirm statement. Do not include any explanations, code, or examples. Return 'New Chat' if the topic is too generic."
 				});
 
 				const res = await fetch("/api/chat", {
