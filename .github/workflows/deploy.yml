@@ -34,8 +34,6 @@ jobs:
           fi &&
           cd poly_chat_ai &&
           npm install &&
-          npm run build &&
-          pm2 stop polychat || true &&
-          pm2 start npm --name polychat -- run start &&
-          pm2 save
+          kill -9 $(lsof -t -i:3000) || true &&
+          npm run dev
         "
